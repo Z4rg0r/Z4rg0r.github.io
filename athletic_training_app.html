@@ -1,0 +1,490 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+
+.app { max-width: 390px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; background: var(--color-background-tertiary); }
+
+.topbar { background: var(--color-background-primary); border-bottom: 0.5px solid var(--color-border-tertiary); padding: 14px 16px 10px; position: sticky; top: 0; z-index: 10; }
+.topbar-title { font-size: 17px; font-weight: 500; color: var(--color-text-primary); }
+.topbar-sub { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+
+.content { flex: 1; overflow-y: auto; padding: 12px; }
+
+.tab-bar { background: var(--color-background-primary); border-top: 0.5px solid var(--color-border-tertiary); display: flex; padding: 8px 0 4px; }
+.tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; padding: 4px 0; border: none; background: none; color: var(--color-text-secondary); font-size: 10px; }
+.tab i { font-size: 22px; }
+.tab.active { color: var(--color-text-primary); }
+.tab.active i { color: #1D9E75; }
+
+.section { margin-bottom: 16px; }
+.section-label { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; padding-left: 2px; }
+
+.card { background: var(--color-background-primary); border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-tertiary); padding: 14px 16px; margin-bottom: 10px; }
+
+.today-phase { background: #E1F5EE; border-radius: var(--border-radius-lg); border: 0.5px solid #9FE1CB; padding: 14px 16px; margin-bottom: 10px; }
+.phase-badge { font-size: 11px; font-weight: 500; color: #085041; background: #9FE1CB; padding: 3px 10px; border-radius: 20px; display: inline-block; margin-bottom: 8px; }
+.phase-title { font-size: 16px; font-weight: 500; color: #085041; }
+.phase-desc { font-size: 13px; color: #0F6E56; margin-top: 4px; line-height: 1.5; }
+
+.session-type-row { display: flex; gap: 8px; margin-bottom: 10px; }
+.session-pill { flex: 1; padding: 10px 8px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); font-size: 12px; font-weight: 500; color: var(--color-text-secondary); cursor: pointer; text-align: center; transition: all 0.15s; }
+.session-pill.selected { background: #1D9E75; border-color: #1D9E75; color: #fff; }
+
+.btn-primary { width: 100%; padding: 13px; background: #1D9E75; color: #fff; border: none; border-radius: var(--border-radius-md); font-size: 15px; font-weight: 500; cursor: pointer; margin-top: 4px; }
+.btn-secondary { width: 100%; padding: 11px; background: var(--color-background-primary); color: var(--color-text-primary); border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); font-size: 14px; cursor: pointer; margin-top: 8px; }
+
+.workout-block { border-left: 3px solid #1D9E75; padding: 10px 14px; margin-bottom: 8px; background: var(--color-background-primary); border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0; }
+.workout-block-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+.workout-block-detail { font-size: 12px; color: var(--color-text-secondary); margin-top: 3px; line-height: 1.5; }
+.workout-block.accent-amber { border-left-color: #BA7517; }
+.workout-block.accent-purple { border-left-color: #534AB7; }
+.workout-block.accent-coral { border-left-color: #993C1D; }
+
+.exercise-tag { display: inline-block; font-size: 11px; padding: 3px 9px; border-radius: 20px; margin: 3px 3px 0 0; background: var(--color-background-secondary); color: var(--color-text-secondary); border: 0.5px solid var(--color-border-tertiary); }
+
+.stat-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.stat-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px; }
+.stat-label { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 6px; }
+.stat-value { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
+.stat-target { font-size: 11px; color: #0F6E56; margin-top: 3px; }
+.stat-bar-wrap { height: 4px; background: var(--color-background-tertiary); border-radius: 2px; margin-top: 8px; }
+.stat-bar { height: 4px; background: #1D9E75; border-radius: 2px; }
+
+.timeline-item { display: flex; gap: 12px; margin-bottom: 16px; }
+.timeline-dot-wrap { display: flex; flex-direction: column; align-items: center; }
+.timeline-dot { width: 10px; height: 10px; border-radius: 50%; background: #1D9E75; margin-top: 5px; flex-shrink: 0; }
+.timeline-dot.future { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-secondary); }
+.timeline-line { width: 1px; flex: 1; background: var(--color-border-tertiary); margin-top: 4px; }
+.timeline-content { flex: 1; padding-bottom: 4px; }
+.timeline-period { font-size: 11px; color: var(--color-text-secondary); }
+.timeline-name { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin: 2px 0; }
+.timeline-goals { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
+.timeline-badge { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 20px; margin-top: 4px; }
+.badge-active { background: #E1F5EE; color: #085041; }
+.badge-upcoming { background: var(--color-background-secondary); color: var(--color-text-secondary); }
+
+.lib-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 0.5px solid var(--color-border-tertiary); cursor: pointer; }
+.lib-item:last-child { border-bottom: none; }
+.lib-icon { width: 38px; height: 38px; border-radius: var(--border-radius-md); background: var(--color-background-secondary); display: flex; align-items: center; justify-content: center; color: var(--color-text-secondary); font-size: 20px; flex-shrink: 0; }
+.lib-name { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
+.lib-tags { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
+.lib-arrow { margin-left: auto; color: var(--color-text-secondary); font-size: 16px; }
+
+.log-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+.log-label { font-size: 13px; color: var(--color-text-secondary); flex: 1; }
+.log-input { width: 80px; padding: 7px 10px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); font-size: 14px; color: var(--color-text-primary); text-align: right; }
+.log-unit { font-size: 12px; color: var(--color-text-secondary); width: 28px; }
+
+.notes-input { width: 100%; padding: 10px 12px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); font-size: 14px; color: var(--color-text-primary); resize: none; height: 72px; font-family: var(--font-sans); margin-top: 4px; }
+
+.filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.filter-chip { padding: 6px 12px; border-radius: 20px; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); font-size: 12px; color: var(--color-text-secondary); cursor: pointer; }
+.filter-chip.active { background: #1D9E75; border-color: #1D9E75; color: #fff; }
+
+.modal-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); display: none; z-index: 20; align-items: flex-end; }
+.modal-overlay.open { display: flex; }
+.modal-sheet { background: var(--color-background-primary); border-radius: 16px 16px 0 0; padding: 20px 16px; width: 100%; max-height: 80vh; overflow-y: auto; }
+.modal-handle { width: 36px; height: 4px; background: var(--color-border-secondary); border-radius: 2px; margin: 0 auto 16px; }
+.modal-title { font-size: 16px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+.modal-desc { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; margin-bottom: 12px; }
+.modal-section-label { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.06em; margin: 12px 0 6px; }
+
+.hidden { display: none; }
+
+.toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #085041; color: #fff; padding: 10px 20px; border-radius: var(--border-radius-md); font-size: 13px; opacity: 0; transition: opacity 0.3s; pointer-events: none; white-space: nowrap; z-index: 30; }
+.toast.show { opacity: 1; }
+
+.progress-ring { transform: rotate(-90deg); }
+</style>
+
+<div class="app" id="app">
+  <div class="topbar">
+    <div id="topbar-content">
+      <div class="topbar-title">Athlete OS</div>
+      <div class="topbar-sub">Week 3 · Phase 1 — Foundation</div>
+    </div>
+  </div>
+
+  <div class="content" id="main-content"></div>
+
+  <div class="tab-bar">
+    <button class="tab active" onclick="switchTab('today')" id="tab-today">
+      <i class="ti ti-bolt" aria-hidden="true"></i>Today
+    </button>
+    <button class="tab" onclick="switchTab('progress')" id="tab-progress">
+      <i class="ti ti-chart-line" aria-hidden="true"></i>Progress
+    </button>
+    <button class="tab" onclick="switchTab('library')" id="tab-library">
+      <i class="ti ti-books" aria-hidden="true"></i>Library
+    </button>
+    <button class="tab" onclick="switchTab('plan')" id="tab-plan">
+      <i class="ti ti-map" aria-hidden="true"></i>Plan
+    </button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal-sheet" id="modal-sheet">
+    <div class="modal-handle"></div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const DATA = {
+  phase: { num: 1, name: "Foundation", weeks: "Weeks 1–6", color: "teal" },
+  week: 3,
+  sessionType: "Upper skill",
+  exercises: {
+    skills: [
+      { id: "scap-pull", name: "Scapular pulls", sets: "3×8", tip: "Hang from bar, depress scapula fully. Dead hang position. Essential for muscle-up path.", tags: ["skill","upper","pull"], category: "skill" },
+      { id: "arch-hollow", name: "Arch/hollow holds", sets: "4×20s each", tip: "Alternate arch (Superman shape) and hollow (banana). Core of bar gymnastics.", tags: ["skill","core"], category: "skill" },
+      { id: "active-hang", name: "Active hang", sets: "3×30s", tip: "Fully engaged shoulders — not a passive hang. Feel the lats fire.", tags: ["skill","upper"], category: "skill" },
+    ],
+    strength: [
+      { id: "pull-up", name: "Pull-ups", sets: "4 sets × 3–4 reps", tip: "Strict, full ROM. Rest 2–3 min. Quality over quantity. Track reps each set.", tags: ["strength","upper","pull"], category: "strength" },
+      { id: "ring-row", name: "Ring rows", sets: "3×10", tip: "Feet elevated for more challenge. Pause 1s at chest. Great horizontal pull.", tags: ["strength","upper"], category: "strength" },
+      { id: "kb-press", name: "KB single-arm press", sets: "3×8 each", tip: "25 kg each hand. Control the descent. Brace the core throughout.", tags: ["strength","upper","push"], category: "strength" },
+    ],
+    conditioning: [
+      { id: "row-intervals", name: "Rower intervals", sets: "5 × 250m", tip: "Rest 90s between. Push the pace — RPE 8. Track split time.", tags: ["cardio","conditioning"], category: "conditioning" },
+    ],
+    mobility: [
+      { id: "wrist-prep", name: "Wrist circles + extension", sets: "2 min", tip: "Critical before any pressing. 10 circles each direction, then wall stretch.", tags: ["mobility","warmup"], category: "mobility" },
+      { id: "thoracic", name: "Thoracic rotations", sets: "10 each side", tip: "On hands and knees. Thread the needle. Key for overhead work.", tags: ["mobility"], category: "mobility" },
+    ]
+  },
+  sessionTypes: [
+    { id: "upper-skill", label: "Upper + skill" },
+    { id: "lower-power", label: "Lower + power" },
+    { id: "conditioning", label: "Conditioning" },
+    { id: "full-body", label: "Full body" },
+  ],
+  metrics: [
+    { id: "pull-ups", label: "Pull-ups", value: "4", unit: "reps", target: "10", progress: 40, targetLabel: "→ 10 reps" },
+    { id: "run-pace", label: "Run pace", value: "6:45", unit: "/km", target: "5:30", progress: 45, targetLabel: "→ 5:30/km" },
+    { id: "muscle-up", label: "Muscle-up", value: "0%", unit: "", target: "✓", progress: 15, targetLabel: "In progress" },
+    { id: "handstand", label: "Handstand hold", value: "3s", unit: "", target: "30s", progress: 10, targetLabel: "→ 30s hold" },
+  ],
+  logData: { "pull-ups": "", "run-pace": "", notes: "" },
+  plan: [
+    { period: "Months 1–2", name: "Foundation", status: "active", goals: "Movement quality · Scapular strength · Pull-up base · Aerobic base · Habit formation" },
+    { period: "Months 3–4", name: "Strength acquisition", status: "upcoming", goals: "Force production · Weighted progressions · Lactate threshold · Kipping mechanics" },
+    { period: "Months 5–6", name: "Power & skill transfer", status: "upcoming", goals: "Explosive training · Muscle-up attempts · Sprint intervals · Handstand wall work" },
+    { period: "Months 7–8", name: "Athletic expression", status: "upcoming", goals: "Muscle-up consolidation · VO2 max · Complex movements · Sport-specific capacity" },
+    { period: "Months 9–10", name: "Performance peak", status: "upcoming", goals: "Max strength tests · PR attempts · Ring dips · L-sit progressions" },
+    { period: "Months 11–12", name: "Integration & longevity", status: "upcoming", goals: "Skill refinement · Deload · Annual assessment · New cycle planning" },
+  ],
+  library: [
+    { name: "Pull-up progressions", icon: "ti-arrow-bar-up", tags: "Upper · Pull · Skill", detail: { desc: "Full progression from dead hang to strict pull-up.", steps: ["Dead hang 30s", "Scapular pulls 3×8", "Negative pull-ups 3×5 (5s descent)", "Band-assisted 3×8", "Strict pull-up max sets", "Weighted (+5kg) 3×3"] } },
+    { name: "Muscle-up path", icon: "ti-trophy", tags: "Skill · Upper · Goal", detail: { desc: "12-month structured progression toward your first muscle-up.", steps: ["Phase 1: Scap strength + hollow/arch", "Phase 2: Kipping pull-up (bar)", "Phase 3: Chest-to-bar pull-up", "Phase 4: Transition drill on low bar", "Phase 5: Band-assisted muscle-up", "Phase 6: Strict muscle-up"] } },
+    { name: "Handstand path", icon: "ti-hand-stop", tags: "Skill · Balance · Core", detail: { desc: "Wall-based handstand progression to freestanding hold.", steps: ["Hollow body hold 20s", "Pike push-up 3×8", "Wall plank (feet on wall) 30s", "Chest-to-wall handstand 30s", "Kick-up practice", "Freestanding attempts"] } },
+    { name: "Lower body power", icon: "ti-flame", tags: "Lower · Power · Athletic", detail: { desc: "Explosive lower body for jumping, sprinting and athletic movement.", steps: ["Broad jumps 3×5", "Box jump 3×5", "KB swing 4×10", "Bulgarian split squat 3×8", "Sled push 4×20m", "RDL 3×8 (60kg+)"] } },
+    { name: "Conditioning blocks", icon: "ti-heart-rate-monitor", tags: "Cardio · Conditioning", detail: { desc: "Varied conditioning modalities. Rotate to avoid adaptation.", steps: ["Rower intervals: 5×250m", "Assault bike: 10×20s on/40s off", "Sled drag: 6×30m", "Row 1000m time trial (monthly)", "Run 5km easy pace", "Complex: row + kb + pull-up circuit"] } },
+    { name: "Mobility protocol", icon: "ti-yoga", tags: "Mobility · Recovery", detail: { desc: "Daily or pre-session mobility targeting athletic needs.", steps: ["Wrist prep 2 min", "Thoracic rotations 10/side", "Hip flexor couch stretch 60s/side", "Ankle circles + calf stretch", "Shoulder CARs 10/side", "Cat-cow 10 reps"] } },
+  ],
+  libFilter: "all",
+};
+
+let activeTab = "today";
+let selectedSession = 0;
+let generatedWorkout = null;
+
+function switchTab(tab) {
+  activeTab = tab;
+  ["today","progress","library","plan"].forEach(t => {
+    document.getElementById("tab-"+t).classList.toggle("active", t===tab);
+  });
+  render();
+}
+
+function render() {
+  const c = document.getElementById("main-content");
+  const tb = document.getElementById("topbar-content");
+  if (activeTab==="today") { tb.innerHTML=`<div class="topbar-title">Athlete OS</div><div class="topbar-sub">Week ${DATA.week} · Phase ${DATA.phase.num} — ${DATA.phase.name}</div>`; c.innerHTML = renderToday(); }
+  else if (activeTab==="progress") { tb.innerHTML=`<div class="topbar-title">Progress</div><div class="topbar-sub">All indicators</div>`; c.innerHTML = renderProgress(); }
+  else if (activeTab==="library") { tb.innerHTML=`<div class="topbar-title">Library</div><div class="topbar-sub">Exercises & progressions</div>`; c.innerHTML = renderLibrary(); }
+  else if (activeTab==="plan") { tb.innerHTML=`<div class="topbar-title">12-month plan</div><div class="topbar-sub">Your athletic roadmap</div>`; c.innerHTML = renderPlan(); }
+}
+
+function renderToday() {
+  const types = DATA.sessionTypes;
+  return `
+  <div class="section">
+    <div class="today-phase">
+      <div class="phase-badge">Phase 1 · Foundation</div>
+      <div class="phase-title">Upper body + skill work</div>
+      <div class="phase-desc">Focus: scapular control, pull-up strength, basic bar gymnastics. Keep intensity moderate — quality reps only.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Session type</div>
+    <div class="session-type-row">
+      ${types.slice(0,2).map((t,i)=>`<div class="session-pill ${selectedSession===i?'selected':''}" onclick="selectSession(${i})">${t.label}</div>`).join("")}
+    </div>
+    <div class="session-type-row">
+      ${types.slice(2,4).map((t,i)=>`<div class="session-pill ${selectedSession===i+2?'selected':''}" onclick="selectSession(${i+2})">${t.label}</div>`).join("")}
+    </div>
+    <button class="btn-primary" onclick="generateWorkout()"><i class="ti ti-refresh" style="margin-right:6px"></i>Generate session</button>
+  </div>
+
+  ${generatedWorkout ? renderWorkout() : ""}
+  `;
+}
+
+function selectSession(i) { selectedSession = i; render(); }
+
+function generateWorkout() {
+  generatedWorkout = true;
+  render();
+  setTimeout(()=>{ document.getElementById("workout-section")?.scrollIntoView({behavior:"smooth"}); }, 50);
+}
+
+function renderWorkout() {
+  const allEx = [...DATA.exercises.skills, ...DATA.exercises.strength, ...DATA.exercises.conditioning, ...DATA.exercises.mobility];
+  return `
+  <div class="section" id="workout-section">
+    <div class="section-label">Today's session · ~50 min</div>
+
+    <div class="section-label" style="margin-top:4px;font-size:10px;color:#0F6E56">Warmup · 8 min</div>
+    ${DATA.exercises.mobility.map(e => `
+    <div class="workout-block accent-amber" onclick="openExercise('${e.id}')">
+      <div class="workout-block-title">${e.name} <span style="font-size:11px;font-weight:400;color:#BA7517">${e.sets}</span></div>
+      <div class="workout-block-detail">${e.tip.substring(0,60)}…</div>
+    </div>`).join("")}
+
+    <div class="section-label" style="margin-top:8px;font-size:10px;color:#085041">Skill block · 12 min</div>
+    ${DATA.exercises.skills.map(e => `
+    <div class="workout-block accent-purple" onclick="openExercise('${e.id}')">
+      <div class="workout-block-title">${e.name} <span style="font-size:11px;font-weight:400;color:#534AB7">${e.sets}</span></div>
+      <div class="workout-block-detail">${e.tip.substring(0,70)}…</div>
+    </div>`).join("")}
+
+    <div class="section-label" style="margin-top:8px;font-size:10px">Strength · 22 min</div>
+    ${DATA.exercises.strength.map(e => `
+    <div class="workout-block" onclick="openExercise('${e.id}')">
+      <div class="workout-block-title">${e.name} <span style="font-size:11px;font-weight:400;color:#0F6E56">${e.sets}</span></div>
+      <div class="workout-block-detail">${e.tip.substring(0,70)}…</div>
+    </div>`).join("")}
+
+    <div class="section-label" style="margin-top:8px;font-size:10px;color:#993C1D">Conditioning · 10 min</div>
+    ${DATA.exercises.conditioning.map(e => `
+    <div class="workout-block accent-coral" onclick="openExercise('${e.id}')">
+      <div class="workout-block-title">${e.name} <span style="font-size:11px;font-weight:400;color:#993C1D">${e.sets}</span></div>
+      <div class="workout-block-detail">${e.tip.substring(0,70)}…</div>
+    </div>`).join("")}
+
+    <button class="btn-primary" style="margin-top:8px" onclick="openLog()"><i class="ti ti-edit" style="margin-right:6px"></i>Log this session</button>
+  </div>`;
+}
+
+function openExercise(id) {
+  const all = [...DATA.exercises.skills, ...DATA.exercises.strength, ...DATA.exercises.conditioning, ...DATA.exercises.mobility];
+  const ex = all.find(e=>e.id===id);
+  if (!ex) return;
+  document.getElementById("modal-body").innerHTML = `
+    <div class="modal-title">${ex.name}</div>
+    <div style="margin:6px 0 12px;display:flex;flex-wrap:wrap;gap:4px">${ex.tags.map(t=>`<span class="exercise-tag">${t}</span>`).join("")}</div>
+    <div class="modal-section-label">Load / volume</div>
+    <div class="modal-desc" style="margin-bottom:8px">${ex.sets}</div>
+    <div class="modal-section-label">Coaching cue</div>
+    <div class="modal-desc">${ex.tip}</div>
+    <button class="btn-secondary" onclick="closeModalBtn()">Close</button>
+  `;
+  document.getElementById("modal").classList.add("open");
+}
+
+function openLog() {
+  document.getElementById("modal-body").innerHTML = `
+    <div class="modal-title">Log session</div>
+    <div class="modal-desc">Record your key metrics for today.</div>
+    <div class="modal-section-label">Performance</div>
+    <div class="log-row"><span class="log-label">Pull-ups (best set)</span><input class="log-input" type="number" id="log-pullup" placeholder="—"><span class="log-unit">reps</span></div>
+    <div class="log-row"><span class="log-label">KB press (each)</span><input class="log-input" type="number" id="log-kb" placeholder="—"><span class="log-unit">kg</span></div>
+    <div class="log-row"><span class="log-label">Rower best split</span><input class="log-input" type="text" id="log-row" placeholder="—"><span class="log-unit">/500</span></div>
+    <div class="log-row"><span class="log-label">Skill: scap quality</span>
+      <select class="log-input" id="log-scap" style="width:80px;text-align:left">
+        <option>—</option><option>✓✓✓</option><option>✓✓</option><option>✓</option>
+      </select><span class="log-unit"></span>
+    </div>
+    <div class="modal-section-label">Notes</div>
+    <textarea class="notes-input" id="log-notes" placeholder="Energy level, what felt good, what to adjust…"></textarea>
+    <button class="btn-primary" style="margin-top:12px" onclick="saveLog()">Save session</button>
+  `;
+  document.getElementById("modal").classList.add("open");
+}
+
+function saveLog() {
+  closeModalBtn();
+  showToast("Session logged ✓");
+}
+
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"), 2500);
+}
+
+function renderProgress() {
+  return `
+  <div class="section">
+    <div class="section-label">Key indicators</div>
+    <div class="stat-grid">
+      ${DATA.metrics.map(m=>`
+      <div class="stat-card" onclick="openMetric('${m.id}')">
+        <div class="stat-label">${m.label}</div>
+        <div class="stat-value">${m.value}</div>
+        <div class="stat-target">${m.targetLabel}</div>
+        <div class="stat-bar-wrap"><div class="stat-bar" style="width:${m.progress}%"></div></div>
+      </div>`).join("")}
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Monthly test · June</div>
+    <div class="card">
+      <div style="font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px">Monthly benchmark</div>
+      <div style="font-size:13px;color:var(--color-text-secondary);line-height:1.7">
+        Max pull-ups (strict) · Max push-ups in 2 min · 1km run time · 5-jump standing broad jump · Hollow hold max time
+      </div>
+      <button class="btn-secondary" onclick="openTestLog()">Log benchmark results</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Muscle-up roadmap</div>
+    <div class="card">
+      ${["Scapular control","Active hang 45s","5 strict pull-ups","Chest-to-bar pull-up","Kipping pull-up","Muscle-up"].map((s,i)=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:${i<5?'0.5px solid var(--color-border-tertiary)':'none'}">
+        <div style="width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;
+          ${i<2?'background:#E1F5EE;color:#085041':i===2?'background:#FAEEDA;color:#633806':'background:var(--color-background-secondary);color:var(--color-text-secondary)'}">
+          ${i<2?'✓':i+1}
+        </div>
+        <div style="font-size:13px;color:${i<2?'var(--color-text-primary)':i===2?'#633806':'var(--color-text-secondary)'};">${s}</div>
+        ${i===2?'<span style="margin-left:auto;font-size:10px;background:#FAEEDA;color:#633806;padding:2px 8px;border-radius:20px">In progress</span>':''}
+      </div>`).join("")}
+    </div>
+  </div>`;
+}
+
+function openMetric(id) {
+  const m = DATA.metrics.find(x=>x.id===id);
+  document.getElementById("modal-body").innerHTML = `
+    <div class="modal-title">${m.label}</div>
+    <div style="margin:8px 0 4px;font-size:32px;font-weight:500;color:var(--color-text-primary)">${m.value}</div>
+    <div style="font-size:13px;color:#0F6E56;margin-bottom:16px">Target: ${m.target}</div>
+    <div class="stat-bar-wrap" style="height:6px;margin-bottom:16px"><div class="stat-bar" style="width:${m.progress}%;height:6px"></div></div>
+    <div class="modal-section-label">Log new value</div>
+    <div class="log-row"><span class="log-label">Today's result</span><input class="log-input" type="text" id="metric-val" placeholder="${m.value}"><span class="log-unit">${m.unit}</span></div>
+    <button class="btn-primary" style="margin-top:12px" onclick="saveMetric()">Update</button>
+    <button class="btn-secondary" onclick="closeModalBtn()">Cancel</button>
+  `;
+  document.getElementById("modal").classList.add("open");
+}
+
+function openTestLog() {
+  document.getElementById("modal-body").innerHTML = `
+    <div class="modal-title">June benchmark</div>
+    <div class="modal-desc">Record each result. Compare with last month to track real progress.</div>
+    <div class="log-row"><span class="log-label">Max pull-ups</span><input class="log-input" type="number" placeholder="—"><span class="log-unit">reps</span></div>
+    <div class="log-row"><span class="log-label">Push-ups (2 min)</span><input class="log-input" type="number" placeholder="—"><span class="log-unit">reps</span></div>
+    <div class="log-row"><span class="log-label">1km run</span><input class="log-input" type="text" placeholder="—"><span class="log-unit">m:ss</span></div>
+    <div class="log-row"><span class="log-label">Hollow hold</span><input class="log-input" type="number" placeholder="—"><span class="log-unit">sec</span></div>
+    <button class="btn-primary" style="margin-top:12px" onclick="saveBench()">Save benchmark</button>
+  `;
+  document.getElementById("modal").classList.add("open");
+}
+
+function saveMetric() { closeModalBtn(); showToast("Metric updated ✓"); }
+function saveBench() { closeModalBtn(); showToast("Benchmark saved ✓"); }
+
+function renderLibrary() {
+  const cats = ["all","skill","strength","conditioning","mobility"];
+  return `
+  <div class="filter-row">
+    ${cats.map(c=>`<div class="filter-chip ${DATA.libFilter===c?'active':''}" onclick="setFilter('${c}')">${c}</div>`).join("")}
+  </div>
+  <div class="card" style="padding:0 16px">
+    ${DATA.library.map((item,i)=>`
+    <div class="lib-item" onclick="openLibItem(${i})">
+      <div class="lib-icon"><i class="${item.icon}" aria-hidden="true"></i></div>
+      <div style="flex:1;min-width:0">
+        <div class="lib-name">${item.name}</div>
+        <div class="lib-tags">${item.tags}</div>
+      </div>
+      <i class="ti ti-chevron-right lib-arrow" aria-hidden="true"></i>
+    </div>`).join("")}
+  </div>`;
+}
+
+function setFilter(cat) { DATA.libFilter = cat; render(); }
+
+function openLibItem(i) {
+  const item = DATA.library[i];
+  document.getElementById("modal-body").innerHTML = `
+    <div class="modal-title">${item.name}</div>
+    <div style="margin-bottom:12px"><span class="exercise-tag">${item.tags.replace(/·/g,'</span><span class="exercise-tag">')}</span></div>
+    <div class="modal-desc">${item.detail.desc}</div>
+    <div class="modal-section-label">Progression steps</div>
+    ${item.detail.steps.map((s,idx)=>`
+    <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:10px">
+      <div style="width:22px;height:22px;border-radius:50%;background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:var(--color-text-secondary);flex-shrink:0">${idx+1}</div>
+      <div style="font-size:13px;color:var(--color-text-primary);padding-top:3px;line-height:1.5">${s}</div>
+    </div>`).join("")}
+    <button class="btn-secondary" style="margin-top:8px" onclick="closeModalBtn()">Close</button>
+  `;
+  document.getElementById("modal").classList.add("open");
+}
+
+function renderPlan() {
+  return `
+  <div class="section">
+    <div class="section-label">Annual roadmap</div>
+    ${DATA.plan.map((p,i)=>`
+    <div class="timeline-item">
+      <div class="timeline-dot-wrap">
+        <div class="timeline-dot ${p.status==='upcoming'?'future':''}"></div>
+        ${i<DATA.plan.length-1?'<div class="timeline-line"></div>':''}
+      </div>
+      <div class="timeline-content">
+        <div class="timeline-period">${p.period}</div>
+        <div class="timeline-name">${p.name}</div>
+        <div class="timeline-goals">${p.goals}</div>
+        <span class="timeline-badge ${p.status==='active'?'badge-active':'badge-upcoming'}">${p.status==='active'?'● Current':'Upcoming'}</span>
+      </div>
+    </div>`).join("")}
+  </div>
+
+  <div class="section">
+    <div class="section-label">Short-term targets · Month 1–2</div>
+    <div class="card">
+      ${["6 strict pull-ups","Active hang 45s","5km run under 30 min","Hollow hold 30s","First handstand kick-up"].map((g,i)=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:${i<4?'0.5px solid var(--color-border-tertiary)':'none'}">
+        <i class="ti ti-target" style="font-size:16px;color:#1D9E75" aria-hidden="true"></i>
+        <div style="font-size:13px;color:var(--color-text-primary)">${g}</div>
+      </div>`).join("")}
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Testing calendar</div>
+    <div class="card">
+      <div style="font-size:13px;color:var(--color-text-secondary);line-height:1.8">
+        Every <strong style="font-weight:500;color:var(--color-text-primary)">4 weeks</strong> → Full benchmark test<br>
+        Every <strong style="font-weight:500;color:var(--color-text-primary)">2 weeks</strong> → Skill check-in<br>
+        Every <strong style="font-weight:500;color:var(--color-text-primary)">week</strong> → Log 1 key metric
+      </div>
+    </div>
+  </div>`;
+}
+
+function closeModal(e) { if (e.target===document.getElementById("modal")) closeModalBtn(); }
+function closeModalBtn() { document.getElementById("modal").classList.remove("open"); }
+
+render();
+</script>
