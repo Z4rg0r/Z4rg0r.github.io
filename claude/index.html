@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Athlete OS">
+<meta name="theme-color" content="#ffffff">
+<title>Athlete OS</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --green: #1D9E75;
+  --green-light: #E1F5EE;
+  --green-mid: #9FE1CB;
+  --green-dark: #085041;
+  --green-deep: #0F6E56;
+  --amber: #BA7517;
+  --amber-light: #FAEEDA;
+  --purple: #534AB7;
+  --purple-light: #EEEDFE;
+  --coral: #993C1D;
+  --coral-light: #FAECE7;
+  --bg: #F5F5F3;
+  --surface: #FFFFFF;
+  --border: rgba(0,0,0,0.1);
+  --border-mid: rgba(0,0,0,0.18);
+  --text: #1a1a1a;
+  --text-2: #6b6b6b;
+  --text-3: #9b9b9b;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --tab-height: 60px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111110;
+    --surface: #1c1c1a;
+    --border: rgba(255,255,255,0.1);
+    --border-mid: rgba(255,255,255,0.2);
+    --text: #f0f0ee;
+    --text-2: #a0a09e;
+    --text-3: #6a6a68;
+    --green-light: #04342C;
+    --green-mid: #0F6E56;
+    --green-dark: #9FE1CB;
+    --green-deep: #5DCAA5;
+    --amber-light: #412402;
+    --purple-light: #26215C;
+    --coral-light: #4A1B0C;
+  }
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+  font-size: 16px;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+.app {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  max-width: 500px;
+  margin: 0 auto;
+  background: var(--bg);
+  position: relative;
+}
+
+/* Top bar */
+.topbar {
+  background: var(--surface);
+  border-bottom: 0.5px solid var(--border);
+  padding: env(safe-area-inset-top, 0) 16px 10px;
+  padding-top: max(env(safe-area-inset-top, 0px), 14px);
+  flex-shrink: 0;
+  z-index: 10;
+}
+.topbar-title { font-size: 18px; font-weight: 600; color: var(--text); letter-spacing: -0.3px; }
+.topbar-sub { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+
+/* Scrollable content */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding: 14px 14px calc(var(--tab-height) + env(safe-area-inset-bottom, 0px) + 14px);
+}
+
+/* Tab bar */
+.tab-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border-top: 0.5px solid var(--border);
+  display: flex;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  height: calc(var(--tab-height) + env(safe-area-inset-bottom, 0px));
+  z-index: 10;
+}
+.tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: var(--text-3);
+  font-size: 10px;
+  font-family: inherit;
+  padding-top: 8px;
+}
+.tab i { font-size: 23px; }
+.tab.active { color: var(--text); }
+.tab.active i { color: var(--green); }
+
+/* Cards */
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 0.5px solid var(--border);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+}
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 8px;
+  padding-left: 2px;
+}
+.section { margin-bottom: 20px; }
+
+/* Phase banner */
+.phase-banner {
+  background: var(--green-light);
+  border-radius: var(--radius);
+  border: 0.5px solid var(--green-mid);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+}
+.phase-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--green-dark);
+  background: var(--green-mid);
+  padding: 3px 10px;
+  border-radius: 20px;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+.phase-title { font-size: 16px; font-weight: 600; color: var(--green-dark); }
+.phase-desc { font-size: 13px; color: var(--green-deep); margin-top: 5px; line-height: 1.5; }
+
+/* Session type pills */
+.pill-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.session-pill {
+  padding: 11px 8px;
+  border-radius: var(--radius-sm);
+  border: 0.5px solid var(--border-mid);
+  background: var(--surface);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-2);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+}
+.session-pill.selected { background: var(--green); border-color: var(--green); color: #fff; }
+
+/* Buttons */
+.btn-primary {
+  width: 100%;
+  padding: 14px;
+  background: var(--green);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  margin-top: 4px;
+  letter-spacing: -0.1px;
+}
+.btn-secondary {
+  width: 100%;
+  padding: 12px;
+  background: var(--surface);
+  color: var(--text);
+  border: 0.5px solid var(--border-mid);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  margin-top: 8px;
+}
+
+/* Workout blocks */
+.workout-block {
+  border-left: 3px solid var(--green);
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  background: var(--surface);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  cursor: pointer;
+}
+.workout-block.amber { border-left-color: var(--amber); }
+.workout-block.purple { border-left-color: var(--purple); }
+.workout-block.coral { border-left-color: var(--coral); }
+.wb-title { font-size: 14px; font-weight: 600; color: var(--text); }
+.wb-sets { font-size: 12px; font-weight: 400; color: var(--green); margin-left: 6px; }
+.wb-sets.amber { color: var(--amber); }
+.wb-sets.purple { color: var(--purple); }
+.wb-sets.coral { color: var(--coral); }
+.wb-tip { font-size: 12px; color: var(--text-2); margin-top: 4px; line-height: 1.5; }
+
+/* Stats */
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.stat-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 0.5px solid var(--border);
+  padding: 14px;
+  cursor: pointer;
+}
+.stat-label { font-size: 11px; color: var(--text-2); margin-bottom: 6px; }
+.stat-value { font-size: 24px; font-weight: 600; color: var(--text); letter-spacing: -0.5px; }
+.stat-target { font-size: 11px; color: var(--green); margin-top: 3px; }
+.bar-wrap { height: 4px; background: var(--bg); border-radius: 2px; margin-top: 10px; }
+.bar { height: 4px; background: var(--green); border-radius: 2px; transition: width 0.6s ease; }
+
+/* Timeline */
+.timeline-item { display: flex; gap: 12px; margin-bottom: 18px; }
+.tl-left { display: flex; flex-direction: column; align-items: center; }
+.tl-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--green); margin-top: 4px; flex-shrink: 0; }
+.tl-dot.future { background: var(--border-mid); }
+.tl-line { width: 1px; flex: 1; background: var(--border); margin: 4px 0 0; }
+.tl-right { flex: 1; padding-bottom: 4px; }
+.tl-period { font-size: 11px; color: var(--text-3); }
+.tl-name { font-size: 15px; font-weight: 600; color: var(--text); margin: 2px 0; letter-spacing: -0.2px; }
+.tl-goals { font-size: 12px; color: var(--text-2); line-height: 1.6; }
+.tl-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 20px;
+  margin-top: 5px;
+}
+.badge-active { background: var(--green-light); color: var(--green-dark); }
+.badge-upcoming { background: var(--bg); color: var(--text-3); }
+
+/* Library */
+.lib-item {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 13px 0;
+  border-bottom: 0.5px solid var(--border);
+  cursor: pointer;
+}
+.lib-item:last-child { border-bottom: none; }
+.lib-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: var(--text-2);
+  flex-shrink: 0;
+}
+.lib-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.lib-tags { font-size: 11px; color: var(--text-2); margin-top: 2px; }
+
+/* Filter chips */
+.filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.chip {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 0.5px solid var(--border-mid);
+  background: var(--surface);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-2);
+  cursor: pointer;
+  font-family: inherit;
+}
+.chip.active { background: var(--green); border-color: var(--green); color: #fff; }
+
+/* Log inputs */
+.log-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.log-label { font-size: 13px; color: var(--text-2); flex: 1; }
+.log-input {
+  width: 80px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  border: 0.5px solid var(--border-mid);
+  background: var(--surface);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  text-align: right;
+  font-family: inherit;
+}
+.log-unit { font-size: 12px; color: var(--text-3); width: 32px; }
+.notes-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 0.5px solid var(--border-mid);
+  background: var(--surface);
+  font-size: 14px;
+  color: var(--text);
+  resize: none;
+  height: 80px;
+  font-family: inherit;
+  margin-top: 4px;
+}
+
+/* Modal bottom sheet */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: flex-end;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal-sheet {
+  background: var(--surface);
+  border-radius: 20px 20px 0 0;
+  padding: 20px 18px;
+  padding-bottom: max(20px, env(safe-area-inset-bottom, 20px));
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  transform: translateY(100%);
+  transition: transform 0.25s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.modal-overlay.open .modal-sheet { transform: translateY(0); }
+.modal-handle { width: 36px; height: 4px; background: var(--border-mid); border-radius: 2px; margin: 0 auto 18px; }
+.modal-title { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 4px; letter-spacing: -0.3px; }
+.modal-desc { font-size: 13px; color: var(--text-2); line-height: 1.6; margin-bottom: 12px; }
+.modal-section-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin: 14px 0 8px;
+}
+
+/* Step list */
+.step-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+.step-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-2);
+  flex-shrink: 0;
+}
+.step-text { font-size: 13px; color: var(--text); line-height: 1.5; padding-top: 4px; }
+
+/* Tag pill */
+.tag { display: inline-block; font-size: 11px; padding: 3px 9px; border-radius: 20px; margin: 3px 3px 0 0; background: var(--bg); color: var(--text-2); border: 0.5px solid var(--border); }
+
+/* Muscle-up progress */
+.mu-step { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 0.5px solid var(--border); }
+.mu-step:last-child { border-bottom: none; }
+.mu-circle {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 600;
+  flex-shrink: 0;
+}
+.mu-done { background: var(--green-light); color: var(--green-dark); }
+.mu-current { background: var(--amber-light); color: var(--amber); }
+.mu-future { background: var(--bg); color: var(--text-3); }
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: calc(var(--tab-height) + env(safe-area-inset-bottom, 0px) + 12px);
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: #111;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0;
+  transition: all 0.25s;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 200;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Divider */
+.divider { height: 0.5px; background: var(--border); margin: 4px 0 12px; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="topbar" id="topbar">
+    <div class="topbar-title">Athlete OS</div>
+    <div class="topbar-sub" id="topbar-sub">Week 3 · Phase 1 — Foundation</div>
+  </div>
+  <div class="content" id="content"></div>
+  <div class="tab-bar">
+    <button class="tab active" onclick="switchTab('today')" id="tab-today"><i class="ti ti-bolt"></i>Today</button>
+    <button class="tab" onclick="switchTab('progress')" id="tab-progress"><i class="ti ti-chart-line"></i>Progress</button>
+    <button class="tab" onclick="switchTab('library')" id="tab-library"><i class="ti ti-books"></i>Library</button>
+    <button class="tab" onclick="switchTab('plan')" id="tab-plan"><i class="ti ti-map"></i>Plan</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal" onclick="handleModalClick(event)">
+  <div class="modal-sheet" id="modal-sheet">
+    <div class="modal-handle"></div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── STATE ───────────────────────────────────────────────
+const S = {
+  tab: 'today',
+  selectedSession: 0,
+  workoutGenerated: false,
+  libFilter: 'all',
+  metrics: [
+    { id: 'pullups', label: 'Pull-ups', value: 4, unit: 'reps', target: 10, progress: 40, targetLabel: '→ 10 reps' },
+    { id: 'pace', label: 'Run pace', value: '6:45', unit: '/km', target: '5:30', progress: 45, targetLabel: '→ 5:30/km' },
+    { id: 'muscleup', label: 'Muscle-up', value: '15%', unit: '', target: '✓', progress: 15, targetLabel: 'In progress' },
+    { id: 'handstand', label: 'Handstand', value: '3s', unit: '', target: '30s', progress: 10, targetLabel: '→ 30s hold' },
+  ]
+};
+
+// Load persisted data
+try {
+  const saved = localStorage.getItem('athleteos');
+  if (saved) Object.assign(S, JSON.parse(saved));
+} catch(e) {}
+
+function save() {
+  try { localStorage.setItem('athleteos', JSON.stringify({ metrics: S.metrics })); } catch(e) {}
+}
+
+// ─── DATA ────────────────────────────────────────────────
+const SESSIONS = [
+  { id: 'upper', label: 'Upper + skill' },
+  { id: 'lower', label: 'Lower + power' },
+  { id: 'conditioning', label: 'Conditioning' },
+  { id: 'fullbody', label: 'Full body' },
+];
+
+const WORKOUTS = {
+  upper: {
+    warmup: [
+      { name: 'Wrist circles + extension', sets: '2 min', tip: 'Critical before pressing. 10 circles each direction, then wall stretch. Never skip this.', color: 'amber' },
+      { name: 'Thoracic rotations', sets: '10/side', tip: 'On hands and knees. Thread the needle. Key for overhead work and bar gymnastics.', color: 'amber' },
+    ],
+    skill: [
+      { name: 'Scapular pulls', sets: '3 × 8', tip: 'Hang from bar, depress scapula fully without bending elbows. Dead hang position. This is the foundation of your muscle-up.', color: 'purple' },
+      { name: 'Arch / hollow holds', sets: '4 × 20s each', tip: 'Alternate arch (Superman) and hollow (banana). The two fundamental shapes of bar gymnastics. Perfect each before moving on.', color: 'purple' },
+      { name: 'Active hang', sets: '3 × 30s', tip: 'Fully engaged shoulders — not passive. Feel the lats fire and shoulders pack down. Build to 45s before Phase 2.', color: 'purple' },
+    ],
+    strength: [
+      { name: 'Pull-ups', sets: '4 sets × 3–4 reps', tip: 'Strict, full ROM. Rest 2–3 min between sets. Quality over quantity. Track reps each set — this is your key metric.', color: 'green' },
+      { name: 'Ring rows', sets: '3 × 10', tip: 'Feet elevated for more challenge. Pause 1s at chest. Great horizontal pulling movement that pairs with vertical pull-ups.', color: 'green' },
+      { name: 'KB single-arm press', sets: '3 × 8 each', tip: '25 kg each hand. Control the descent (3s). Brace the core throughout — no lateral lean.', color: 'green' },
+    ],
+    conditioning: [
+      { name: 'Rower intervals', sets: '5 × 250m', tip: 'Rest 90s between efforts. Push the pace — RPE 8. Note your split time. Target: under 1:10/500m eventually.', color: 'coral' },
+    ],
+  },
+  lower: {
+    warmup: [
+      { name: 'Hip flexor couch stretch', sets: '60s/side', tip: 'Back knee on ground, front foot forward. Drive hips forward. Essential before any lower body work.', color: 'amber' },
+      { name: 'Ankle circles + calf stretch', sets: '2 min', tip: '10 circles each direction, then wall calf stretch. Ankle mobility directly affects squat depth.', color: 'amber' },
+    ],
+    skill: [
+      { name: 'Broad jump', sets: '5 jumps', tip: 'Max distance each rep. Swing arms, hinge hips, explode. Full recovery between jumps — this is power, not cardio.', color: 'purple' },
+      { name: 'Box jump', sets: '4 × 4', tip: 'Step down, never jump down. Absorb landing softly. Height should be challenging but safe — knees track over toes.', color: 'purple' },
+    ],
+    strength: [
+      { name: 'Bulgarian split squat', sets: '3 × 8/side', tip: 'Rear foot elevated. Front shin vertical. Add KB in each hand when bodyweight is easy. King of unilateral lower work.', color: 'green' },
+      { name: 'Romanian deadlift', sets: '3 × 8 (60kg)', tip: 'Hinge at hips, soft knee. Feel the stretch in hamstrings. Maintain neutral spine throughout. Add weight when form is solid.', color: 'green' },
+      { name: 'Sled push', sets: '4 × 20m', tip: 'Low body angle, drive through the floor. Rest 90s. One of the best tools for lower body power and conditioning combined.', color: 'green' },
+    ],
+    conditioning: [
+      { name: 'Assault bike intervals', sets: '10 × 20s on / 40s off', tip: 'All-out on the 20s — truly max effort. The bike has no ego, it shows you exactly how hard you worked.', color: 'coral' },
+    ],
+  },
+  conditioning: {
+    warmup: [
+      { name: 'Easy row', sets: '5 min', tip: 'RPE 4–5. Warming up joints and elevating heart rate gradually. Focus on stroke rate around 20 spm.', color: 'amber' },
+    ],
+    skill: [
+      { name: 'KB swing', sets: '5 × 10', tip: 'Hip hinge, not squat. Explosive hip snap at the top. The swing teaches the hip hinge pattern that carries into every athletic movement.', color: 'purple' },
+    ],
+    strength: [
+      { name: 'Pull-up + KB swing complex', sets: '4 rounds', tip: '3 pull-ups → 10 KB swings → 60s rest. Combines pulling strength with hip power in a short dense block.', color: 'green' },
+    ],
+    conditioning: [
+      { name: '1km row for time', sets: '1 effort', tip: 'All-out. Monthly benchmark — record the time. Average pace should improve 2–5s/month in Phase 1.', color: 'coral' },
+      { name: 'Sled drag', sets: '6 × 30m', tip: 'Walk backwards, pull the sled. Easier on the joints than pushing. Rest 90s between.', color: 'coral' },
+    ],
+  },
+  fullbody: {
+    warmup: [
+      { name: 'Cat-cow + thoracic openers', sets: '10 reps each', tip: 'Slow and controlled. Find end range on each. Sets up the spine for everything that follows.', color: 'amber' },
+      { name: 'Shoulder CARs', sets: '10/side', tip: 'Controlled Articular Rotations. Slow full circles with the arm at shoulder height. The best shoulder warmup for overhead work.', color: 'amber' },
+    ],
+    skill: [
+      { name: 'Hollow body hold', sets: '4 × 20s', tip: 'Lower back pressed into floor, arms overhead. This is the foundation of every gymnastic movement. Build to 45s.', color: 'purple' },
+      { name: 'Handstand kick-up practice', sets: '10 attempts', tip: 'Against the wall, chest facing wall. Find the balance point. Focus on straight body, not arch. No timer — focus on feel.', color: 'purple' },
+    ],
+    strength: [
+      { name: 'Pull-up', sets: '3 × max', tip: 'Max strict reps each set. Rest 3 min. Record total for the session.', color: 'green' },
+      { name: 'Push-up variations', sets: '4 × 15', tip: 'Alternate: wide / close / archer. Keep elbows at 45°, full chest to floor, locked out at top.', color: 'green' },
+      { name: 'KB goblet squat', sets: '3 × 12', tip: '24kg KB held at chest. Deep as possible, keeping chest up. Excellent mobility + strength combo.', color: 'green' },
+    ],
+    conditioning: [
+      { name: 'AMRAP 10 min', sets: '10 min', tip: '5 pull-ups / 10 push-ups / 15 air squats. Classic Cindy format. Track your rounds. Benchmark this every 4 weeks.', color: 'coral' },
+    ],
+  }
+};
+
+const LIBRARY = [
+  { name: 'Pull-up progression', icon: 'ti-arrow-bar-up', tags: 'Upper · Pull · Skill',
+    desc: 'Step-by-step from zero to 10 strict pull-ups. The backbone of your upper body strength and the prerequisite for the muscle-up.',
+    steps: ['Dead hang — 3 × 30s. Build to 60s.', 'Scapular pulls — 3 × 8. No elbow bend.', 'Negative pull-ups — 3 × 5, 5s descent. Control is everything.', 'Band-assisted pull-ups — 3 × 8. Lightest band possible.', 'Strict pull-ups — max reps. Aim for +1 rep/month.', 'Weighted pull-ups (+5kg) — 3 × 3. Once you hit 8 strict.'] },
+  { name: 'Muscle-up path', icon: 'ti-trophy', tags: 'Skill · Upper · Goal',
+    desc: 'Your main 12-month target. Each step unlocks the next. Skipping steps will waste months — trust the process.',
+    steps: ['Phase 1: Scapular strength + hollow/arch body shapes (now)', 'Phase 2: Active hang 45s + 6 strict pull-ups', 'Phase 3: Chest-to-bar pull-up (bar touches chest at top)', 'Phase 4: Kipping mechanics (hip drive + timing)', 'Phase 5: Transition drill on low bar / with band', 'Phase 6: First strict or kipping muscle-up'] },
+  { name: 'Handstand path', icon: 'ti-hand-stop', tags: 'Skill · Balance · Core',
+    desc: 'Wall-based progression to freestanding hold. Requires wrist strength, hollow body, and shoulder stability — all things you are building now.',
+    steps: ['Hollow body hold 20s — floor. Foundation of handstand position.', 'Pike push-up 3 × 8 — shoulder pressing strength.', 'Wall plank (feet on wall, body horizontal) 30s', 'Chest-to-wall handstand 30s — arms straight, body tight', 'Kick-up practice with spotter or alone', 'Freestanding balance attempts — 1–5 seconds'] },
+  { name: 'Lower body power', icon: 'ti-flame', tags: 'Lower · Power · Athletic',
+    desc: 'Explosive lower body for jumping, sprinting, changing direction. Functional athleticism starts here.',
+    steps: ['Broad jump — 5 × max distance. Full recovery.', 'Box jump — 4 × 4. Stick the landing.', 'KB swing — 4 × 10. Hip snap, not a squat.', 'Bulgarian split squat — 3 × 8/side. Add load weekly.', 'Sled push — 4 × 20m. Low angle, drive hard.', 'RDL — 3 × 8 at 60kg+. Hamstring tension throughout.'] },
+  { name: 'Conditioning blocks', icon: 'ti-heart-rate-monitor', tags: 'Cardio · Conditioning',
+    desc: 'Rotate these modalities to prevent adaptation. Your aerobic base is built over months, not weeks.',
+    steps: ['Rower intervals — 5 × 250m, 90s rest. Track split.', 'Assault bike — 10 × 20s max / 40s easy.', 'Sled drag — 6 × 30m backward, 90s rest.', 'Row 1000m time trial — monthly benchmark.', 'Easy run 5km — conversational pace (you can talk).', 'Complex: 4 rounds of row 250m + 10 swings + 5 pull-ups.'] },
+  { name: 'Mobility protocol', icon: 'ti-yoga', tags: 'Mobility · Recovery · Daily',
+    desc: '10 minutes daily. The single highest ROI habit for long-term athletic performance and injury prevention.',
+    steps: ['Wrist prep — 2 min. Circles + wall extension stretch.', 'Thoracic rotations — 10/side. Thread the needle.', 'Hip flexor couch stretch — 60s/side. Non-negotiable.', 'Ankle circles + calf stretch — 2 min.', 'Shoulder CARs — 10/side. Slow and full range.', 'Cat-cow — 10 reps. Find each end range deliberately.'] },
+];
+
+const PLAN = [
+  { period: 'Months 1–2', name: 'Foundation', status: 'active', goals: 'Movement quality · Scapular strength · Pull-up base · Aerobic base · Habit formation' },
+  { period: 'Months 3–4', name: 'Strength acquisition', status: 'upcoming', goals: 'Force production · Weighted progressions · Lactate threshold · Kipping mechanics' },
+  { period: 'Months 5–6', name: 'Power & skill transfer', status: 'upcoming', goals: 'Explosive training · Muscle-up attempts · Sprint intervals · Handstand wall work' },
+  { period: 'Months 7–8', name: 'Athletic expression', status: 'upcoming', goals: 'Muscle-up consolidation · VO₂ max work · Complex movements · Sport capacity' },
+  { period: 'Months 9–10', name: 'Performance peak', status: 'upcoming', goals: 'Max strength tests · PR attempts · Ring dips · L-sit progressions' },
+  { period: 'Months 11–12', name: 'Integration & longevity', status: 'upcoming', goals: 'Skill refinement · Deload · Annual assessment · New cycle planning' },
+];
+
+// ─── RENDER ──────────────────────────────────────────────
+function render() {
+  const c = document.getElementById('content');
+  const sub = document.getElementById('topbar-sub');
+  const titles = { today: 'Athlete OS', progress: 'Progress', library: 'Library', plan: '12-Month Plan' };
+  const subs = { today: 'Week 3 · Phase 1 — Foundation', progress: 'All indicators', library: 'Exercises & progressions', plan: 'Your athletic roadmap' };
+  document.querySelector('.topbar-title').textContent = titles[S.tab];
+  sub.textContent = subs[S.tab];
+  ['today','progress','library','plan'].forEach(t => {
+    document.getElementById('tab-'+t).classList.toggle('active', t === S.tab);
+  });
+  c.innerHTML = { today: renderToday, progress: renderProgress, library: renderLibrary, plan: renderPlan }[S.tab]();
+}
+
+function switchTab(t) { S.tab = t; render(); }
+
+// TODAY
+function renderToday() {
+  return `
+  <div class="section">
+    <div class="phase-banner">
+      <div class="phase-badge">Phase 1 · Foundation</div>
+      <div class="phase-title">Build the base — every session counts</div>
+      <div class="phase-desc">Focus on movement quality and consistency. Keep intensity moderate — technical reps only. Your job right now is to build habits, not break records.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Session type</div>
+    <div class="pill-grid">
+      ${SESSIONS.map((s,i) => `<div class="session-pill ${S.selectedSession===i?'selected':''}" onclick="selectSession(${i})">${s.label}</div>`).join('')}
+    </div>
+    <button class="btn-primary" onclick="generateWorkout()">
+      <i class="ti ti-refresh" style="margin-right:6px;font-size:16px;vertical-align:-2px"></i>Generate session
+    </button>
+  </div>
+
+  ${S.workoutGenerated ? renderWorkout() : ''}
+  `;
+}
+
+function selectSession(i) { S.selectedSession = i; S.workoutGenerated = false; render(); }
+
+function generateWorkout() {
+  S.workoutGenerated = true;
+  render();
+  setTimeout(() => {
+    const el = document.getElementById('workout-section');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 60);
+}
+
+function renderWorkout() {
+  const key = SESSIONS[S.selectedSession].id;
+  const w = WORKOUTS[key];
+  const colorClass = { green:'', amber:'amber', purple:'purple', coral:'coral' };
+  const labelColor = { green: 'var(--green)', amber: 'var(--amber)', purple: 'var(--purple)', coral: 'var(--coral)' };
+  const blocks = (arr) => arr.map(e => `
+    <div class="workout-block ${colorClass[e.color]}" onclick="openEx(${JSON.stringify(e).split('"').join("'")})">
+      <div class="wb-title">${e.name}<span class="wb-sets ${colorClass[e.color]}">${e.sets}</span></div>
+      <div class="wb-tip">${e.tip.substring(0,80)}…</div>
+    </div>`).join('');
+
+  return `
+  <div class="section" id="workout-section">
+    <div class="section-label">Today's session · ~50 min</div>
+
+    <div class="section-label" style="margin-top:4px;font-size:10px;color:var(--amber)">Warmup · 8 min</div>
+    ${blocks(w.warmup)}
+
+    ${w.skill.length ? `<div class="section-label" style="margin-top:8px;font-size:10px;color:var(--purple)">Skill block · 12 min</div>${blocks(w.skill)}` : ''}
+
+    <div class="section-label" style="margin-top:8px;font-size:10px;color:var(--green)">Strength · 20 min</div>
+    ${blocks(w.strength)}
+
+    <div class="section-label" style="margin-top:8px;font-size:10px;color:var(--coral)">Conditioning · 10 min</div>
+    ${blocks(w.conditioning)}
+
+    <button class="btn-primary" style="margin-top:10px" onclick="openLog()">
+      <i class="ti ti-edit" style="margin-right:6px;font-size:16px;vertical-align:-2px"></i>Log this session
+    </button>
+  </div>`;
+}
+
+function openEx(e) {
+  // e comes in with single quotes, reconstruct
+  const name = e.name || e;
+  modal(`
+    <div class="modal-title">${e.name}</div>
+    <div style="margin:8px 0 14px">${['skill','strength','conditioning','mobility'].map(t => `<span class="tag">${t}</span>`).join('')}</div>
+    <div class="modal-section-label">Volume</div>
+    <div class="modal-desc">${e.sets}</div>
+    <div class="modal-section-label">Coaching cue</div>
+    <div class="modal-desc">${e.tip}</div>
+    <button class="btn-secondary" onclick="closeModal()">Close</button>
+  `);
+}
+
+function openLog() {
+  modal(`
+    <div class="modal-title">Log session</div>
+    <div class="modal-desc">Record your key metrics. These build your long-term picture.</div>
+    <div class="modal-section-label">Performance</div>
+    <div class="log-row"><span class="log-label">Pull-ups (best set)</span><input class="log-input" type="number" inputmode="numeric" placeholder="—"><span class="log-unit">reps</span></div>
+    <div class="log-row"><span class="log-label">KB press (each hand)</span><input class="log-input" type="number" inputmode="numeric" placeholder="—"><span class="log-unit">kg</span></div>
+    <div class="log-row"><span class="log-label">Rower best split</span><input class="log-input" type="text" inputmode="text" placeholder="1:15"><span class="log-unit">/500</span></div>
+    <div class="log-row">
+      <span class="log-label">Skill quality</span>
+      <select class="log-input" style="width:80px;text-align:left">
+        <option>—</option><option>Great</option><option>OK</option><option>Rough</option>
+      </select><span class="log-unit"></span>
+    </div>
+    <div class="modal-section-label">Notes</div>
+    <textarea class="notes-input" placeholder="Energy level, what felt good, what to adjust…"></textarea>
+    <button class="btn-primary" style="margin-top:14px" onclick="saveLog()">Save session</button>
+  `);
+}
+
+function saveLog() { closeModal(); showToast('Session logged ✓'); }
+
+// PROGRESS
+function renderProgress() {
+  return `
+  <div class="section">
+    <div class="section-label">Key indicators</div>
+    <div class="stat-grid">
+      ${S.metrics.map(m => `
+      <div class="stat-card" onclick="openMetric('${m.id}')">
+        <div class="stat-label">${m.label}</div>
+        <div class="stat-value">${m.value}</div>
+        <div class="stat-target">${m.targetLabel}</div>
+        <div class="bar-wrap"><div class="bar" style="width:${m.progress}%"></div></div>
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Muscle-up roadmap</div>
+    <div class="card" style="padding: 14px 16px">
+      ${[
+        { label: 'Scapular control', s: 'done' },
+        { label: 'Active hang 45s', s: 'done' },
+        { label: '6 strict pull-ups', s: 'current' },
+        { label: 'Chest-to-bar pull-up', s: 'future' },
+        { label: 'Kipping pull-up', s: 'future' },
+        { label: 'Muscle-up ✓', s: 'future' },
+      ].map((step, i, arr) => `
+      <div class="mu-step" style="${i===arr.length-1?'border-bottom:none':''}">
+        <div class="mu-circle mu-${step.s}">${step.s==='done'?'✓':step.s==='current'?'→':i+1}</div>
+        <div style="font-size:13px;color:${step.s==='future'?'var(--text-3)':'var(--text)'};font-weight:${step.s==='current'?'600':'400'}">${step.label}</div>
+        ${step.s==='current'?'<span style="margin-left:auto;font-size:10px;font-weight:600;background:var(--amber-light);color:var(--amber);padding:2px 10px;border-radius:20px">Now</span>':''}
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Monthly benchmark</div>
+    <div class="card">
+      <div style="font-size:13px;color:var(--text-2);line-height:1.8">
+        Max pull-ups · Max push-ups 2 min · 1km run · Hollow hold · Broad jump
+      </div>
+      <button class="btn-secondary" onclick="openBench()">Log benchmark results</button>
+    </div>
+  </div>`;
+}
+
+function openMetric(id) {
+  const m = S.metrics.find(x => x.id === id);
+  modal(`
+    <div class="modal-title">${m.label}</div>
+    <div style="font-size:34px;font-weight:700;color:var(--text);letter-spacing:-1px;margin:6px 0 4px">${m.value}</div>
+    <div style="font-size:13px;color:var(--green);margin-bottom:16px">Target: ${m.target}</div>
+    <div class="bar-wrap" style="height:6px"><div class="bar" style="width:${m.progress}%;height:6px"></div></div>
+    <div class="modal-section-label">Update value</div>
+    <div class="log-row">
+      <span class="log-label">New result</span>
+      <input class="log-input" type="text" id="metric-input" placeholder="${m.value}">
+      <span class="log-unit">${m.unit}</span>
+    </div>
+    <button class="btn-primary" style="margin-top:12px" onclick="saveMetric('${id}')">Update</button>
+    <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+  `);
+}
+
+function saveMetric(id) {
+  const val = document.getElementById('metric-input').value;
+  if (val) {
+    const m = S.metrics.find(x => x.id === id);
+    m.value = val;
+    save();
+  }
+  closeModal();
+  showToast('Metric updated ✓');
+  render();
+}
+
+function openBench() {
+  modal(`
+    <div class="modal-title">Monthly benchmark</div>
+    <div class="modal-desc">Record each result. Compare month-to-month — this is your real progress.</div>
+    <div class="log-row"><span class="log-label">Max pull-ups</span><input class="log-input" type="number" inputmode="numeric" placeholder="—"><span class="log-unit">reps</span></div>
+    <div class="log-row"><span class="log-label">Push-ups (2 min)</span><input class="log-input" type="number" inputmode="numeric" placeholder="—"><span class="log-unit">reps</span></div>
+    <div class="log-row"><span class="log-label">1km run</span><input class="log-input" type="text" placeholder="—"><span class="log-unit">m:ss</span></div>
+    <div class="log-row"><span class="log-label">Hollow hold</span><input class="log-input" type="number" inputmode="numeric" placeholder="—"><span class="log-unit">sec</span></div>
+    <div class="log-row"><span class="log-label">Broad jump</span><input class="log-input" type="number" inputmode="numeric" placeholder="—"><span class="log-unit">cm</span></div>
+    <button class="btn-primary" style="margin-top:14px" onclick="saveBench()">Save benchmark</button>
+  `);
+}
+
+function saveBench() { closeModal(); showToast('Benchmark saved ✓'); }
+
+// LIBRARY
+function renderLibrary() {
+  const cats = ['all','skill','strength','conditioning','mobility'];
+  return `
+  <div class="filter-row">
+    ${cats.map(c => `<button class="chip ${S.libFilter===c?'active':''}" onclick="setFilter('${c}')">${c}</button>`).join('')}
+  </div>
+  <div class="card" style="padding: 4px 16px">
+    ${LIBRARY.map((item, i) => `
+    <div class="lib-item" onclick="openLib(${i})">
+      <div class="lib-icon"><i class="${item.icon}"></i></div>
+      <div style="flex:1;min-width:0">
+        <div class="lib-name">${item.name}</div>
+        <div class="lib-tags">${item.tags}</div>
+      </div>
+      <i class="ti ti-chevron-right" style="color:var(--text-3);font-size:18px"></i>
+    </div>`).join('')}
+  </div>`;
+}
+
+function setFilter(c) { S.libFilter = c; render(); }
+
+function openLib(i) {
+  const item = LIBRARY[i];
+  modal(`
+    <div class="modal-title">${item.name}</div>
+    <div style="margin:8px 0 12px">${item.tags.split('·').map(t => `<span class="tag">${t.trim()}</span>`).join('')}</div>
+    <div class="modal-desc">${item.desc}</div>
+    <div class="modal-section-label">Progression steps</div>
+    ${item.steps.map((s, j) => `
+    <div class="step-item">
+      <div class="step-num">${j+1}</div>
+      <div class="step-text">${s}</div>
+    </div>`).join('')}
+    <button class="btn-secondary" style="margin-top:8px" onclick="closeModal()">Close</button>
+  `);
+}
+
+// PLAN
+function renderPlan() {
+  return `
+  <div class="section">
+    <div class="section-label">Annual roadmap</div>
+    ${PLAN.map((p, i) => `
+    <div class="timeline-item">
+      <div class="tl-left">
+        <div class="tl-dot ${p.status==='upcoming'?'future':''}"></div>
+        ${i < PLAN.length-1 ? '<div class="tl-line"></div>' : ''}
+      </div>
+      <div class="tl-right">
+        <div class="tl-period">${p.period}</div>
+        <div class="tl-name">${p.name}</div>
+        <div class="tl-goals">${p.goals}</div>
+        <span class="tl-badge ${p.status==='active'?'badge-active':'badge-upcoming'}">${p.status==='active'?'● Current':'Upcoming'}</span>
+      </div>
+    </div>`).join('')}
+  </div>
+
+  <div class="section">
+    <div class="section-label">Targets — months 1–2</div>
+    <div class="card">
+      ${['6 strict pull-ups','Active hang 45s','5km run under 30 min','Hollow hold 30s','First handstand kick-up'].map((g,i,arr) => `
+      <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:${i<arr.length-1?'0.5px solid var(--border)':'none'}">
+        <i class="ti ti-target" style="font-size:18px;color:var(--green)"></i>
+        <div style="font-size:13px;color:var(--text)">${g}</div>
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Testing rhythm</div>
+    <div class="card">
+      <div style="font-size:13px;color:var(--text-2);line-height:2">
+        Every <strong style="font-weight:600;color:var(--text)">4 weeks</strong> → Full benchmark<br>
+        Every <strong style="font-weight:600;color:var(--text)">2 weeks</strong> → Skill check-in<br>
+        Every <strong style="font-weight:600;color:var(--text)">session</strong> → Log 1 key metric
+      </div>
+    </div>
+  </div>`;
+}
+
+// ─── MODAL ───────────────────────────────────────────────
+function modal(html) {
+  document.getElementById('modal-body').innerHTML = html;
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+}
+
+function handleModalClick(e) {
+  if (e.target === document.getElementById('modal')) closeModal();
+}
+
+// ─── TOAST ───────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ─── INIT ────────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>
