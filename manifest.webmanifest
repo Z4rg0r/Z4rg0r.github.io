@@ -1,0 +1,17 @@
+{
+  "name": "Atlas Athletique",
+  "short_name": "Atlas",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f4f2ea",
+  "theme_color": "#111514",
+  "description": "Systeme annuel de developpement athletique polyvalent.",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#111514">
+    <meta name="description" content="Systeme annuel de developpement athletique polyvalent.">
+    <title>Atlas Athletique</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Navigation principale">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">A</span>
+          <div>
+            <strong>Atlas Athletique</strong>
+            <span>12 mois de progression</span>
+          </div>
+        </div>
+        <nav class="nav" id="nav">
+          <button class="nav-item active" data-view="today" type="button">Aujourd'hui</button>
+          <button class="nav-item" data-view="generator" type="button">Generateur</button>
+          <button class="nav-item" data-view="roadmap" type="button">Plan annuel</button>
+          <button class="nav-item" data-view="library" type="button">Bibliotheque</button>
+          <button class="nav-item" data-view="tests" type="button">Tests</button>
+          <button class="nav-item" data-view="logbook" type="button">Journal</button>
+        </nav>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Athlete amateur polyvalent</p>
+            <h1 id="pageTitle">Aujourd'hui</h1>
+          </div>
+          <div class="top-actions">
+            <button class="icon-btn" id="installBtn" type="button" title="Installer l'app" aria-label="Installer l'app">+</button>
+            <button class="icon-btn" id="resetBtn" type="button" title="Reinitialiser les donnees" aria-label="Reinitialiser les donnees">R</button>
+          </div>
+        </header>
+
+        <section class="view active" id="today">
+          <div class="hero-panel">
+            <div class="hero-copy">
+              <p class="eyebrow">Bloc actuel</p>
+              <h2 id="blockName">Construction generale</h2>
+              <p id="blockIntent">Force relative, base cardio et controle technique.</p>
+            </div>
+            <div class="hero-metrics" id="heroMetrics"></div>
+          </div>
+
+          <div class="two-col">
+            <section class="panel">
+              <div class="panel-head">
+              <div>
+                <p class="eyebrow">Seance conseillee</p>
+                <h2 id="dailyTitle">Jour A</h2>
+              </div>
+              <div class="button-row">
+                <button class="secondary-btn" id="dailySave" type="button">Journaliser</button>
+                <button class="primary-btn" id="dailyGenerate" type="button">Regenerer</button>
+              </div>
+              </div>
+              <div id="dailySession" class="session"></div>
+            </section>
+
+            <section class="panel compact">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Regles du systeme</p>
+                  <h2>Cadre</h2>
+                </div>
+              </div>
+              <ul class="rule-list">
+                <li>Un jour sur deux, 45 a 60 minutes.</li>
+                <li>Technique au debut, fatigue controlee.</li>
+                <li>Progression par capacites, pas seulement par charge.</li>
+                <li>Une semaine allegee toutes les 4 semaines.</li>
+                <li>Arreter a RPE 8 si vertiges, nausees ou perte de forme.</li>
+              </ul>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="generator">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Creation de seance</p>
+                <h2>Parametres</h2>
+              </div>
+              <button class="primary-btn" id="makeSession" type="button">Creer</button>
+            </div>
+            <form class="control-grid" id="sessionForm">
+              <label>
+                Objectif
+                <select id="focusSelect">
+                  <option value="balanced">Equilibre</option>
+                  <option value="muscleup">Muscle-up</option>
+                  <option value="engine">Cardio</option>
+                  <option value="power">Explosivite</option>
+                  <option value="strength">Force relative</option>
+                  <option value="mobility">Mobilite</option>
+                </select>
+              </label>
+              <label>
+                Duree
+                <select id="durationSelect">
+                  <option value="45">45 min</option>
+                  <option value="55" selected>55 min</option>
+                  <option value="65">65 min</option>
+                </select>
+              </label>
+              <label>
+                Intensite
+                <select id="intensitySelect">
+                  <option value="easy">Technique facile</option>
+                  <option value="normal" selected>Normale</option>
+                  <option value="hard">Challenge propre</option>
+                </select>
+              </label>
+              <label>
+                Materiel dominant
+                <select id="equipmentSelect">
+                  <option value="full">Salle complete</option>
+                  <option value="rings">Anneaux + barre</option>
+                  <option value="kb">Kettlebells</option>
+                  <option value="engine">Rameur / assault bike / sled</option>
+                  <option value="bodyweight">Poids du corps</option>
+                </select>
+              </label>
+            </form>
+          </section>
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Resultat</p>
+                <h2 id="generatedTitle">Seance personnalisee</h2>
+              </div>
+              <button class="secondary-btn" id="saveGenerated" type="button">Journaliser</button>
+            </div>
+            <div id="generatedSession" class="session"></div>
+          </section>
+        </section>
+
+        <section class="view" id="roadmap">
+          <div class="timeline" id="timeline"></div>
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Semaine type</p>
+                <h2>Un jour sur deux</h2>
+              </div>
+            </div>
+            <div class="week-grid" id="weekGrid"></div>
+          </section>
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Objectifs mesurables</p>
+                <h2>Jalons</h2>
+              </div>
+            </div>
+            <div class="milestones" id="milestones"></div>
+          </section>
+        </section>
+
+        <section class="view" id="library">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Exercices et methodes</p>
+                <h2>Bibliotheque</h2>
+              </div>
+            </div>
+            <div class="filters" id="libraryFilters"></div>
+            <div class="exercise-grid" id="exerciseGrid"></div>
+          </section>
+        </section>
+
+        <section class="view" id="tests">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Toutes les 4 semaines</p>
+                <h2>Batterie de tests</h2>
+              </div>
+              <button class="primary-btn" id="saveTests" type="button">Sauver</button>
+            </div>
+            <div class="test-grid" id="testGrid"></div>
+          </section>
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Lecture</p>
+                <h2>Progression</h2>
+              </div>
+            </div>
+            <div id="testHistory" class="history"></div>
+          </section>
+        </section>
+
+        <section class="view" id="logbook">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Suivi local</p>
+                <h2>Journal des seances</h2>
+              </div>
+              <button class="secondary-btn" id="exportData" type="button">Exporter</button>
+            </div>
+            <div class="logbook" id="logbookList"></div>
+          </section>
+        </section>
+      </main>
+    </div>
+    <script src="app.js" defer></script>
+  </body>
+</html>
