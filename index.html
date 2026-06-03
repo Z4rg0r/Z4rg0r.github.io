@@ -131,6 +131,26 @@
                   <option value="bodyweight">Poids du corps</option>
                 </select>
               </label>
+              <label>
+                Type de jour
+                <select id="dayTypeSelect">
+                  <option value="hybrid" selected>Hybride</option>
+                  <option value="strength">Dominante force</option>
+                  <option value="engine">Dominante cardio</option>
+                  <option value="skill">Dominante skill</option>
+                  <option value="recovery">Recuperation active</option>
+                </select>
+              </label>
+              <label>
+                Contrainte
+                <select id="constraintSelect">
+                  <option value="none" selected>Aucune</option>
+                  <option value="lowimpact">Bas impact articulaire</option>
+                  <option value="shoulder">Epaule sensible</option>
+                  <option value="knee">Genou sensible</option>
+                  <option value="lowback">Bas du dos sensible</option>
+                </select>
+              </label>
             </form>
           </section>
           <section class="panel">
@@ -211,6 +231,7 @@
               </div>
               <button class="secondary-btn" id="exportData" type="button">Exporter</button>
             </div>
+            <div class="logbook-insights" id="logbookInsights"></div>
             <div class="logbook" id="logbookList"></div>
           </section>
         </section>

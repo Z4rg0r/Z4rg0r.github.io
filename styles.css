@@ -219,7 +219,7 @@ button { cursor: pointer; }
   gap: 12px;
 }
 label {
-  display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 7px;
   color: var(--muted);
   font-size: 13px;
@@ -326,6 +326,33 @@ textarea { min-height: 90px; resize: vertical; }
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
 }
+  .logbook-insights {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .insight-card {
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #ffffff;
+  }
+
+  .insight-card strong {
+    display: block;
+    font-size: 22px;
+    line-height: 1;
+  }
+
+  .insight-card span {
+    display: block;
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 700;
+  }
 .test-card {
   padding: 14px;
   border: 1px solid var(--line);
@@ -358,13 +385,12 @@ textarea { min-height: 90px; resize: vertical; }
   .nav { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .nav-item { text-align: center; }
   .hero-panel, .two-col, .timeline, .week-grid { grid-template-columns: 1fr; }
-  .control-grid, .exercise-grid, .test-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .control-grid, .exercise-grid, .test-grid, .logbook-insights { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 620px) {
   .main { padding: 14px; }
   .topbar { align-items: center; }
-  .brand { margin-bottom: 14px; }
   .nav {
     display: flex;
     overflow-x: auto;
@@ -372,7 +398,8 @@ textarea { min-height: 90px; resize: vertical; }
   }
   .nav-item { flex: 0 0 auto; width: auto; }
   .hero-panel, .panel { padding: 15px; }
-  .hero-metrics, .control-grid, .exercise-grid, .test-grid { grid-template-columns: 1fr; }
+  .hero-metrics, .control-grid, .exercise-grid, .test-grid, .logbook-insights { grid-template-columns: 1fr; }
+  .log-row { grid-template-columns: 1fr; }
   .panel-head { align-items: flex-start; }
   .topbar h1 { font-size: 32px; }
 }
